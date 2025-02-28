@@ -20,7 +20,12 @@ import java.util.List;
 public class ArticleController {
     private final ArticleService articleService;
 
+    @GetMapping("comment")
+    public String showComment() {
+        return "/articles/update_comment";
+    }
     public ArticleController(ArticleService articleService) {
+
         this.articleService = articleService;
     }
 
