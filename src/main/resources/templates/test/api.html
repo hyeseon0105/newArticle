@@ -14,48 +14,102 @@ password:<input type="text" id="password"><br>
 <button id="btnArray">Array</button><br>
 <button id="btnDelete">Delete</button><br>
 <script>
-    $(document).ready(function(){
-   $("#btnApi").on("click",function(){
-   event.preventDefault()
-    if($("#userid").val==""){
-    $("#userid").focus()
-    return
-    }
-     if($("#password").val==""){
-    $("#password").focus()
-    return
-    }
-     //아이디와 패스워드입력후 전송하면 서버에 출력
-    $.ajax({
-  url:'apiPostTest',
-  type:'post',
-  datatype:'text',
-  headers:{
-    "Content-Type":"application/json",
+    $(document).ready(function () {
+      $("#btnApi").on("click", function () {
+          event.preventDefault();
 
-  },
-  data:JSON.stringify({
-    'userid' : $("#userid").val(),
-    'password':$("#password").val(),
-  }),
-  success : function(data,status,xhr){
-console.log(data)
-  },
-  error:function(xhr,status,error){
-console.log(error)
-  }
- })
-   })
-     $("#btnResponse").on("click",function(){
-     alert("btnResponse")
-   })
-     $("#btnArray").on("click",function(){
-     alert("btnArray")
-   })
-     $("#btnDelete").on("click",function(){
-     alert("btnDelete")
-   })
- })
+          if ($("#userid").val == "") {
+              $("#userid").focus();
+              return;
+          }
+          if ($("#password").val == "") {
+              $("#password").focus();
+              return;
+          }
+
+          // 아이디와 패스워드 입력 후 전송하면 서버에 출력
+          $.ajax({
+              url: "apiPostTest",
+              type: "post",
+              datatype: "text",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              data: JSON.stringify({
+                  'userid': $("#userid").val(),
+                  'password': $("#password").val(),
+              }),
+              success: function (data, status, xhr) {
+                  console.log(data);
+              },
+              error: function (xhr, status, error) {
+                  console.log(error);
+              }
+          });
+      });
+
+          $("#btnResponse").on("click", function () {
+              $.ajax({
+                  url: "getResponse",
+                  type: "post",
+                  datatype: "json",
+                  data: "",
+                  success: function (data, status, xhr) {
+                      console.log(data);
+                  },
+                  error: function (xhr, status, error) {
+                      console.log(error);
+                  }
+              });
+          });
+
+
+
+          $("#btnArray").on("click", function () {
+           let jang = {
+      'userid' : $("#userid").val(),
+      'password' : $("#password").val(),
+       }
+        let jin = {
+      'userid' : '안유진',
+      'password' : '1234',
+       }
+              $.ajax({
+                  url: "apiPostArrayTest",
+                  type: "post",
+                  datatype: "json",
+                   headers: {
+                  "Content-Type": "application/json",
+              },
+              data: JSON.stringify([jang, jin]),
+                  success: function (data, status, xhr) {
+                      console.log(data);
+                  },
+                  error: function (xhr, status, error) {
+                      console.log(error);
+                  }
+              });
+          });
+
+
+          $("#btnDelete").on("click", function () {
+              $.ajax({
+                  url: "apiTest",
+                  type: "put",
+                  datatype: "json",
+                  data: "",
+                  success: function (data, status, xhr) {
+                      console.log(data);
+                  },
+                  error: function (xhr, status, error) {
+                      console.log(error);
+                  }
+              });
+          });
+      });
+
+</script>
+
 </script>
 </body>
 </html>
