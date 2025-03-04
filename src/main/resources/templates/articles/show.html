@@ -68,7 +68,61 @@
                 id="comment-create-btn">댓글 작성</button>
 
     </form>
+    <script th:inline="javascript">
+        $(document).ready(function(){
+          // 댓글 삭제
+          $(document).on("click", "#comment-delete-btn", function(){
+              let commentId = $(this).next().val();
+              let sendUrl = "/api/comments/" + commentId;
 
+              $.ajax({
+                  url : sendUrl,
+                  type : "DELETE",
+                  success : function(data, status, xhr){
+                      alert(data.message);
+                      location.href = `/articles/[[${dto.id}]]`
+                  },
+                  error : function(xhr, status, error){},
+              })
+          })
+
+          // 댓글 입력
+          $("#comment-create-btn").on("click", function(){
+              event.preventDefault();
+              if($("#new-comment-nickname").val()==''){
+                  alert("닉네임을 입력하세요");
+                  $("#new-comment-nickname").focus();
+                  return;
+              }
+              if($("#new-comment-body").val()==''){
+                  alert("댓글을 입력하세요");
+                  $("#new-comment-body").focus();
+                  return;
+              }
+
+              let sendUrl = `/api/articles/[[${dto.id}]]/comments`;
+              let newComment = {
+                    "nickname" : $("#new-comment-nickname").val() ,
+                    "body" : $("#new-comment-body").val()
+                  }
+
+              $.ajax({
+                  url : sendUrl,
+                  type : "POST",
+                  dataType : "json",
+                  data : JSON.stringify(newComment),
+                  headers : {
+                      "Content-Type" : "application/json",
+                  },
+                  success : function(data, status, xhr){
+                      alert(data.message);
+                      location.href = `/articles/[[${dto.id}]]`
+                  },
+                  error : function(xhr, status, error){},
+              })
+          })
+        })
+    </script>
 </div>
 </body>
 </html>
