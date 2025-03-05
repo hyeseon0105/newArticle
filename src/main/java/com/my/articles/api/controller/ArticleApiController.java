@@ -49,10 +49,7 @@ public class ArticleApiController {
         if (ObjectUtils.isEmpty(articleDTO)) {
             throw new BadRequestException("해당 아이디의 게시글 없음");
         }
-
-
 //        2.댓글 리스트 가져오기
-
 
         return ResponseEntity
                 .status(HttpStatus.OK)
