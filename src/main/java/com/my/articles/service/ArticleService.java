@@ -3,7 +3,10 @@ package com.my.articles.service;
 import com.my.articles.dao.ArticleDAO;
 import com.my.articles.dto.ArticleDTO;
 import com.my.articles.entity.Article;
+import com.my.articles.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -15,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleDAO dao;
+    private final ArticleRepository articleRepository;
 
     public List<ArticleDTO> getAllArticles() {
         List<Article> articleList = dao.getALlArticles();
@@ -45,5 +49,10 @@ dao.insertArticle(ArticleDTO.fromDto(dto));
 
     public void updateArticle(ArticleDTO dto) {
         dao.updateArticle(ArticleDTO.fromDto(dto));
+    }
+
+    public Page<ArticleDTO> getArticlePage(Pageable pageable) {
+        Page<Article> articles = articleRepository.findAll(pageable);
+        return articles.map(x -> ArticleDTO.fromEntity(x));
     }
 }

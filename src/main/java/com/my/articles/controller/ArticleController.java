@@ -2,7 +2,12 @@ package com.my.articles.controller;
 
 import com.my.articles.dto.ArticleDTO;
 import com.my.articles.service.ArticleService;
+import com.my.articles.service.PaginationService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,19 +24,46 @@ import java.util.List;
 @RequestMapping("articles")
 public class ArticleController {
     private final ArticleService articleService;
+    private final PaginationService paginationService;
 
     @GetMapping("comment")
     public String showComment() {
         return "/articles/update_comment";
     }
-    public ArticleController(ArticleService articleService) {
+    public ArticleController(ArticleService articleService, PaginationService paginationService) {
 
         this.articleService = articleService;
+        this.paginationService = paginationService;
     }
 
     @GetMapping({"", "/"})
-    public String showAllArticles(Model model) {
-        List<ArticleDTO> articles = articleService.getAllArticles();
+    public String showAllArticles(Model model,
+                                  @PageableDefault(
+                                          page = 0,
+                                          size = 5,
+                                          sort = "id",
+                                          direction = Sort.Direction.DESC
+                                  ) Pageable pageable) {
+
+//        List<ArticleDTO> articles = articleService.getAllArticles();
+//        model.addAttribute("articles", articles);
+//        페이징 처리
+        Page<ArticleDTO> articles = articleService.getArticlePage(pageable);
+
+//        페이지 정보확인하기
+//        전체페이지 수
+        int totalPage = articles.getTotalPages();
+//        현재 페이지수
+        int currentPage = articles.getNumber();
+
+
+        System.out.println("total page"+totalPage);
+        System.out.println("current page"+currentPage);
+
+        //page블럭생성
+        List<Integer> barNumbers = paginationService.getPaginationBarNumber(currentPage, totalPage);
+        System.out.println(barNumbers);
+        model.addAttribute("pageBars", barNumbers);
         model.addAttribute("articles", articles);
         return "/articles/show_all";
     }
@@ -72,7 +104,7 @@ public class ArticleController {
     }
 
     //    게시글 삭제
-//    /articles/${id}/delete
+    //    /articles/${id}/delete
     @GetMapping("{id}/delete")
     public String deleteArticle(@PathVariable("id") Long id
             , RedirectAttributes redirectAttributes) {
